@@ -82,6 +82,9 @@ void Fun4All_DST_Compress(const int nevnt = 10)
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(1);
 
+  //----------------
+  // Test input block
+  //----------------
   {
     Fun4AllInputManager *in = new Fun4AllDstInputManager("DST_CALO_CLUSTER_pythia8_Charm_3MHz");
     in->fileopen("DST_CALO_CLUSTER_pythia8_Charm_3MHz-0000000004-00000.root");
@@ -136,6 +139,9 @@ void Fun4All_DST_Compress(const int nevnt = 10)
     se->registerInputManager(in);
   }
 
+  //----------------
+  // Truth Compression for tracker + calo
+  //----------------
   // build high level tracker association table
   SvtxTruthRecoTableEval *tables = new SvtxTruthRecoTableEval();
   //  tables->Verbosity(verbosity);
@@ -175,7 +181,10 @@ void Fun4All_DST_Compress(const int nevnt = 10)
   compress->AddHitContainer("G4HIT_MICROMEGAS");
   se->registerSubsystem(compress);
 
-  Fun4AllDstOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", "DST_TRUTH_ANALYSIS-0000000004-00000.root");
+  //----------------
+  // Only save useful nodes for analysis
+  //----------------
+  Fun4AllDstOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", "DST_TRUTH_RECO_ANALYSIS-0000000004-00000.root");
   out->AddNode("EventHeader");
   out->AddNode("TOWER_CALIB_HCALIN");
   out->AddNode("CLUSTER_HCALIN");
@@ -185,8 +194,8 @@ void Fun4All_DST_Compress(const int nevnt = 10)
   out->AddNode("TOWER_CALIB_CEMC");
   out->AddNode("CLUSTER_CEMC");
   out->AddNode("CLUSTER_POS_COR_CEMC");
-  //  out->AddNode("G4HIT_BBC");
-  //  out->AddNode("G4HIT_EPD");
+  //  out->AddNode("G4HIT_BBC"); // <- to load from DST_BBC_G4HIT
+  //  out->AddNode("G4HIT_EPD"); // <- to load from DST_BBC_G4HIT
   out->AddNode("PHHepMCGenEventMap");
   out->AddNode("G4HIT_BH_1");
   out->AddNode("G4TruthInfo");
